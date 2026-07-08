@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import vendorData from './vendorData.json'
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000'
 
@@ -14,6 +15,49 @@ function savePct(refPrice, altPrice) {
   const a = parseFloat(altPrice)
   if (!r || isNaN(r) || isNaN(a) || a >= r) return null
   return Math.round(((r - a) / r) * 100)
+}
+
+function daysUntil(dateString) {
+  const target = new Date(`${dateString}T00:00:00`)
+  const now = new Date()
+  const ms = target.setHours(0, 0, 0, 0) - new Date(now.setHours(0, 0, 0, 0))
+  return Math.round(ms / (1000 * 60 * 60 * 24))
+}
+
+function scoreExpiry(daysLeft, sales7d, stock) {
+  const urgency = Math.max(0, 120 - daysLeft)
+  const slowMovement = Math.max(0, 25 - sales7d * 2)
+  const overstock = Math.max(0, stock - sales7d * 3)
+  return Math.min(100, Math.round(urgency * 0.55 + slowMovement * 0.25 + overstock * 0.15))
+}
+
+function vendorDiscountAgent(item) {
+  const daysLeft = daysUntil(item.expiryDate)
+  const score = scoreExpiry(daysLeft, item.previousSales7Days, item.stock)
+  const weighted =
+    daysLeft <= 7 ? 28 :
+    daysLeft <= 14 ? 22 :
+    daysLeft <= 30 ? 15 :
+    daysLeft <= 60 ? 10 : 5
+  const salesBoost = item.previousSales7Days < 10 ? 6 : item.previousSales7Days < 18 ? 3 : 0
+  const discount = Math.min(35, Math.max(0, weighted + salesBoost + Math.floor(score / 25)))
+  const reason =
+    daysLeft <= 7
+      ? 'Expiry is very close, so clearance should be aggressive.'
+      : daysLeft <= 30
+        ? 'The batch is approaching expiry and needs a stronger push.'
+        : item.previousSales7Days < 12
+          ? 'Sales are slow, so a small incentive can improve movement.'
+          : 'Healthy sales pace; keep the discount light.'
+  const action =
+    discount >= 25 ? 'Clear fast' :
+    discount >= 15 ? 'Promote now' :
+    discount >= 8 ? 'Test discount' :
+    'Hold price'
+  const confidence =
+    score >= 75 ? 'High' :
+    score >= 45 ? 'Medium' : 'Low'
+  return { daysLeft, score, discount, reason, action, confidence }
 }
 
 /* ─── Badges ──────────────────────────────────────── */
@@ -33,6 +77,163 @@ function GenericBadge({ isGeneric }) {
     <span className={`badge ${isGeneric ? 'badge--generic' : 'badge--brand'}`}>
       {isGeneric ? 'Generic' : 'Brand'}
     </span>
+  )
+}
+
+function VendorMetric({ label, value, hint }) {
+  return (
+    <div className="vendor-metric">
+      <div className="vendor-metric__value">{value}</div>
+      <div className="vendor-metric__label">{label}</div>
+      {hint && <div className="vendor-metric__hint">{hint}</div>}
+    </div>
+  )
+}
+
+function VendorView({ onBackToSearch }) {
+  const medicines = useMemo(() => {
+    return vendorData.medicines
+      .map(item => {
+        const recommendation = vendorDiscountAgent(item)
+        return { ...item, recommendation }
+      })
+      .sort((a, b) => a.recommendation.daysLeft - b.recommendation.daysLeft)
+  }, [])
+
+  const summary = useMemo(() => {
+    const expiringSoon = medicines.filter(item => item.recommendation.daysLeft <= 30).length
+    const clearanceCandidates = medicines.filter(item => item.recommendation.discount >= 15).length
+    const totalStock = medicines.reduce((sum, item) => sum + item.stock, 0)
+    const avgDiscount = Math.round(
+      medicines.reduce((sum, item) => sum + item.recommendation.discount, 0) / medicines.length
+    )
+    return { expiringSoon, clearanceCandidates, totalStock, avgDiscount }
+  }, [medicines])
+
+  return (
+    <div className="vendor-view">
+      <div className="vendor-hero surface">
+        <div>
+          <p className="eyebrow">Vendor dashboard</p>
+          <h1>Expiry-aware discount planner</h1>
+          <p className="hero-copy">
+            A focused 20-medicine vendor view using attainable fields like stock, expiry,
+            and recent sales to suggest practical discounts.
+          </p>
+        </div>
+        <div className="vendor-hero__actions">
+          <button className="btn btn--ghost" onClick={onBackToSearch}>Back to search</button>
+          <button className="btn">Refresh insights</button>
+        </div>
+      </div>
+
+      <div className="vendor-summary-grid">
+        <VendorMetric label="Medicines tracked" value="20" hint="Curated from user-facing catalog" />
+        <VendorMetric label="Expiring within 30 days" value={String(summary.expiringSoon)} hint="Push these first" />
+        <VendorMetric label="Clearance candidates" value={String(summary.clearanceCandidates)} hint="Need a stronger discount" />
+        <VendorMetric label="Avg suggested discount" value={`${summary.avgDiscount}%`} hint={`Inventory stock: ${summary.totalStock}`} />
+      </div>
+
+      <div className="vendor-layout">
+        <section className="vendor-panel surface">
+          <div className="vendor-panel__header">
+            <div>
+              <div className="vendor-panel__eyebrow">Inventory board</div>
+              <div className="vendor-panel__title">20 medicines with expiry and sales history</div>
+            </div>
+            <div className="vendor-panel__chip">Dummy JSON data</div>
+          </div>
+
+          <div className="vendor-grid">
+            {medicines.map(item => {
+              const urgencyClass =
+                item.recommendation.daysLeft <= 7 ? 'is-urgent' :
+                item.recommendation.daysLeft <= 30 ? 'is-warning' :
+                'is-safe'
+              return (
+                <article key={item.id} className={`vendor-card ${urgencyClass}`}>
+                  <div className="vendor-card__top">
+                    <div>
+                      <h3>{item.name}</h3>
+                      <p>{item.brand} · {item.category}</p>
+                    </div>
+                    <span className={`vendor-badge vendor-badge--${urgencyClass}`}>
+                      {item.recommendation.daysLeft <= 7 ? 'Urgent' : item.recommendation.daysLeft <= 30 ? 'Watch' : 'Healthy'}
+                    </span>
+                  </div>
+
+                  <div className="vendor-card__facts">
+                    <span>Expiry: <strong>{item.expiryDate}</strong></span>
+                    <span>{item.recommendation.daysLeft} days left</span>
+                    <span>Stock: {item.stock}</span>
+                  </div>
+
+                  <div className="vendor-card__stats">
+                    <div>
+                      <span>Sales 7d</span>
+                      <strong>{item.previousSales7Days}</strong>
+                    </div>
+                    <div>
+                      <span>Sales 30d</span>
+                      <strong>{item.previousSales30Days}</strong>
+                    </div>
+                    <div>
+                      <span>Margin</span>
+                      <strong>{item.margin}%</strong>
+                    </div>
+                  </div>
+
+                  <div className="vendor-card__recommendation">
+                    <div className="vendor-card__discount">{item.recommendation.discount}% off</div>
+                    <div className="vendor-card__agent-line">
+                      <span>AI agent</span>
+                      <strong>{item.recommendation.action}</strong>
+                      <em>{item.recommendation.confidence} confidence</em>
+                    </div>
+                    <p>{item.recommendation.reason}</p>
+                  </div>
+                </article>
+              )
+            })}
+          </div>
+        </section>
+
+        <aside className="vendor-side surface">
+          <div className="vendor-panel__header">
+            <div>
+              <div className="vendor-panel__eyebrow">AI logic</div>
+              <div className="vendor-panel__title">How the discount is chosen</div>
+            </div>
+          </div>
+
+          <div className="vendor-insight">
+            <h4>What the model uses</h4>
+            <ul>
+              <li>Expiry date and days left</li>
+              <li>7-day and 30-day sales count</li>
+              <li>Stock level versus recent movement</li>
+              <li>Margin guardrails so discount stays realistic</li>
+            </ul>
+          </div>
+
+          <div className="vendor-insight vendor-insight--accent">
+            <h4>Suggested rule set</h4>
+            <p>If expiry is within 7 days, push 25%+.</p>
+            <p>Within 30 days, use a 10-20% clearance discount.</p>
+            <p>If sales are slow but expiry is far away, keep it light.</p>
+            <p>The agent combines expiry pressure, recent sales, and stock depth before suggesting a discount.</p>
+          </div>
+
+          <div className="vendor-insight">
+            <h4>Why this is valid data</h4>
+            <p>
+              These fields can come from stock entry, batch tracking, billing history,
+              and order history, so they are realistic to collect later.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
   )
 }
 
@@ -667,10 +868,19 @@ function SearchView({ onResult }) {
 
 export default function App() {
   const [result, setResult] = useState(null)
+  const [hash, setHash] = useState(() => window.location.hash)
+
+  useEffect(() => {
+    const onHashChange = () => setHash(window.location.hash)
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [])
 
   return (
     <div className="shell">
-      {result ? (
+      {hash === '#vendor' ? (
+        <VendorView onBackToSearch={() => { window.location.hash = ''; setHash('') }} />
+      ) : result ? (
         <ResultsView result={result} onBack={() => setResult(null)} />
       ) : (
         <SearchView onResult={setResult} />
