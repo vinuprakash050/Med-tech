@@ -1,0 +1,24 @@
+{
+  "medicines": [
+    { "id": 1, "name": "Paracetamol 500mg", "brand": "Dolo", "category": "Pain Relief", "expiry_date": "2026-08-15", "stock": 120, "previous_sales_7_days": 18, "previous_sales_30_days": 72, "margin_percent": 18 },
+    { "id": 2, "name": "Cetirizine 10mg", "brand": "Alerid", "category": "Allergy", "expiry_date": "2026-07-28", "stock": 84, "previous_sales_7_days": 10, "previous_sales_30_days": 39, "margin_percent": 21 },
+    { "id": 3, "name": "Azithromycin 500mg", "brand": "Azee", "category": "Antibiotic", "expiry_date": "2026-07-18", "stock": 52, "previous_sales_7_days": 6, "previous_sales_30_days": 21, "margin_percent": 24 },
+    { "id": 4, "name": "Pantoprazole 40mg", "brand": "Pan", "category": "Acid Relief", "expiry_date": "2026-09-02", "stock": 96, "previous_sales_7_days": 14, "previous_sales_30_days": 58, "margin_percent": 19 },
+    { "id": 5, "name": "Amoxicillin 500mg", "brand": "Mox", "category": "Antibiotic", "expiry_date": "2026-08-01", "stock": 61, "previous_sales_7_days": 9, "previous_sales_30_days": 32, "margin_percent": 23 },
+    { "id": 6, "name": "Metformin 500mg", "brand": "Glycomet", "category": "Diabetes", "expiry_date": "2026-10-05", "stock": 140, "previous_sales_7_days": 24, "previous_sales_30_days": 98, "margin_percent": 16 },
+    { "id": 7, "name": "Atorvastatin 10mg", "brand": "Atorva", "category": "Cholesterol", "expiry_date": "2026-08-20", "stock": 73, "previous_sales_7_days": 12, "previous_sales_30_days": 44, "margin_percent": 20 },
+    { "id": 8, "name": "Omeprazole 20mg", "brand": "Omez", "category": "Acid Relief", "expiry_date": "2026-07-12", "stock": 41, "previous_sales_7_days": 5, "previous_sales_30_days": 19, "margin_percent": 26 },
+    { "id": 9, "name": "Ibuprofen 400mg", "brand": "Brufen", "category": "Pain Relief", "expiry_date": "2026-09-18", "stock": 67, "previous_sales_7_days": 13, "previous_sales_30_days": 49, "margin_percent": 18 },
+    { "id": 10, "name": "Vitamin C 500mg", "brand": "Celin", "category": "Supplements", "expiry_date": "2026-11-07", "stock": 155, "previous_sales_7_days": 17, "previous_sales_30_days": 63, "margin_percent": 28 },
+    { "id": 11, "name": "Levocetirizine 5mg", "brand": "Xyzal", "category": "Allergy", "expiry_date": "2026-07-25", "stock": 58, "previous_sales_7_days": 8, "previous_sales_30_days": 29, "margin_percent": 22 },
+    { "id": 12, "name": "Losartan 50mg", "brand": "Losar", "category": "Blood Pressure", "expiry_date": "2026-09-29", "stock": 112, "previous_sales_7_days": 20, "previous_sales_30_days": 84, "margin_percent": 17 },
+    { "id": 13, "name": "Ferrous Sulfate", "brand": "Fero", "category": "Supplements", "expiry_date": "2026-08-07", "stock": 90, "previous_sales_7_days": 11, "previous_sales_30_days": 37, "margin_percent": 25 },
+    { "id": 14, "name": "Dextromethorphan Syrup", "brand": "Benadryl", "category": "Cough", "expiry_date": "2026-07-16", "stock": 34, "previous_sales_7_days": 4, "previous_sales_30_days": 16, "margin_percent": 27 },
+    { "id": 15, "name": "ORS Sachet", "brand": "Electral", "category": "Hydration", "expiry_date": "2026-10-12", "stock": 180, "previous_sales_7_days": 29, "previous_sales_30_days": 121, "margin_percent": 14 },
+    { "id": 16, "name": "Cough Syrup Adult", "brand": "Ascoril", "category": "Cough", "expiry_date": "2026-08-26", "stock": 47, "previous_sales_7_days": 7, "previous_sales_30_days": 24, "margin_percent": 24 },
+    { "id": 17, "name": "Multivitamin Capsule", "brand": "Becosules", "category": "Supplements", "expiry_date": "2026-11-21", "stock": 143, "previous_sales_7_days": 15, "previous_sales_30_days": 57, "margin_percent": 29 },
+    { "id": 18, "name": "Diclofenac Gel", "brand": "Volini", "category": "Pain Relief", "expiry_date": "2026-07-30", "stock": 39, "previous_sales_7_days": 5, "previous_sales_30_days": 18, "margin_percent": 23 },
+    { "id": 19, "name": "Salbutamol Inhaler", "brand": "Asthalin", "category": "Respiratory", "expiry_date": "2026-09-11", "stock": 26, "previous_sales_7_days": 6, "previous_sales_30_days": 22, "margin_percent": 21 },
+    { "id": 20, "name": "Calcium + D3", "brand": "Shelcal", "category": "Supplements", "expiry_date": "2026-10-27", "stock": 168, "previous_sales_7_days": 19, "previous_sales_30_days": 79, "margin_percent": 17 }
+  ]
+}

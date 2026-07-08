@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import vendorData from './vendorData.json'
+import React, { useEffect, useRef, useState } from 'react'
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000'
 
@@ -15,49 +14,6 @@ function savePct(refPrice, altPrice) {
   const a = parseFloat(altPrice)
   if (!r || isNaN(r) || isNaN(a) || a >= r) return null
   return Math.round(((r - a) / r) * 100)
-}
-
-function daysUntil(dateString) {
-  const target = new Date(`${dateString}T00:00:00`)
-  const now = new Date()
-  const ms = target.setHours(0, 0, 0, 0) - new Date(now.setHours(0, 0, 0, 0))
-  return Math.round(ms / (1000 * 60 * 60 * 24))
-}
-
-function scoreExpiry(daysLeft, sales7d, stock) {
-  const urgency = Math.max(0, 120 - daysLeft)
-  const slowMovement = Math.max(0, 25 - sales7d * 2)
-  const overstock = Math.max(0, stock - sales7d * 3)
-  return Math.min(100, Math.round(urgency * 0.55 + slowMovement * 0.25 + overstock * 0.15))
-}
-
-function vendorDiscountAgent(item) {
-  const daysLeft = daysUntil(item.expiryDate)
-  const score = scoreExpiry(daysLeft, item.previousSales7Days, item.stock)
-  const weighted =
-    daysLeft <= 7 ? 28 :
-    daysLeft <= 14 ? 22 :
-    daysLeft <= 30 ? 15 :
-    daysLeft <= 60 ? 10 : 5
-  const salesBoost = item.previousSales7Days < 10 ? 6 : item.previousSales7Days < 18 ? 3 : 0
-  const discount = Math.min(35, Math.max(0, weighted + salesBoost + Math.floor(score / 25)))
-  const reason =
-    daysLeft <= 7
-      ? 'Expiry is very close, so clearance should be aggressive.'
-      : daysLeft <= 30
-        ? 'The batch is approaching expiry and needs a stronger push.'
-        : item.previousSales7Days < 12
-          ? 'Sales are slow, so a small incentive can improve movement.'
-          : 'Healthy sales pace; keep the discount light.'
-  const action =
-    discount >= 25 ? 'Clear fast' :
-    discount >= 15 ? 'Promote now' :
-    discount >= 8 ? 'Test discount' :
-    'Hold price'
-  const confidence =
-    score >= 75 ? 'High' :
-    score >= 45 ? 'Medium' : 'Low'
-  return { daysLeft, score, discount, reason, action, confidence }
 }
 
 /* ─── Badges ──────────────────────────────────────── */
@@ -90,25 +46,9 @@ function VendorMetric({ label, value, hint }) {
   )
 }
 
-function VendorView({ onBackToSearch }) {
-  const medicines = useMemo(() => {
-    return vendorData.medicines
-      .map(item => {
-        const recommendation = vendorDiscountAgent(item)
-        return { ...item, recommendation }
-      })
-      .sort((a, b) => a.recommendation.daysLeft - b.recommendation.daysLeft)
-  }, [])
-
-  const summary = useMemo(() => {
-    const expiringSoon = medicines.filter(item => item.recommendation.daysLeft <= 30).length
-    const clearanceCandidates = medicines.filter(item => item.recommendation.discount >= 15).length
-    const totalStock = medicines.reduce((sum, item) => sum + item.stock, 0)
-    const avgDiscount = Math.round(
-      medicines.reduce((sum, item) => sum + item.recommendation.discount, 0) / medicines.length
-    )
-    return { expiringSoon, clearanceCandidates, totalStock, avgDiscount }
-  }, [medicines])
+function VendorView({ onBackToSearch, dashboard, loading, error, refresh }) {
+  const medicines = dashboard?.medicines || []
+  const summary = dashboard?.summary
 
   return (
     <div className="vendor-view">
@@ -123,15 +63,17 @@ function VendorView({ onBackToSearch }) {
         </div>
         <div className="vendor-hero__actions">
           <button className="btn btn--ghost" onClick={onBackToSearch}>Back to search</button>
-          <button className="btn">Refresh insights</button>
+          <button className="btn" onClick={refresh} disabled={loading}>
+            {loading ? 'Refreshing…' : 'Refresh insights'}
+          </button>
         </div>
       </div>
 
       <div className="vendor-summary-grid">
-        <VendorMetric label="Medicines tracked" value="20" hint="Curated from user-facing catalog" />
-        <VendorMetric label="Expiring within 30 days" value={String(summary.expiringSoon)} hint="Push these first" />
-        <VendorMetric label="Clearance candidates" value={String(summary.clearanceCandidates)} hint="Need a stronger discount" />
-        <VendorMetric label="Avg suggested discount" value={`${summary.avgDiscount}%`} hint={`Inventory stock: ${summary.totalStock}`} />
+        <VendorMetric label="Medicines tracked" value={String(summary?.medicines_tracked || 0)} hint="Curated from user-facing catalog" />
+        <VendorMetric label="Expiring within 30 days" value={String(summary?.expiring_within_30_days || 0)} hint="Push these first" />
+        <VendorMetric label="Clearance candidates" value={String(summary?.clearance_candidates || 0)} hint="Need a stronger discount" />
+        <VendorMetric label="Avg suggested discount" value={`${summary?.avg_suggested_discount || 0}%`} hint={`Inventory stock: ${summary?.total_stock || 0}`} />
       </div>
 
       <div className="vendor-layout">
@@ -147,8 +89,8 @@ function VendorView({ onBackToSearch }) {
           <div className="vendor-grid">
             {medicines.map(item => {
               const urgencyClass =
-                item.recommendation.daysLeft <= 7 ? 'is-urgent' :
-                item.recommendation.daysLeft <= 30 ? 'is-warning' :
+                item.recommendation.days_left <= 7 ? 'is-urgent' :
+                item.recommendation.days_left <= 30 ? 'is-warning' :
                 'is-safe'
               return (
                 <article key={item.id} className={`vendor-card ${urgencyClass}`}>
@@ -158,33 +100,33 @@ function VendorView({ onBackToSearch }) {
                       <p>{item.brand} · {item.category}</p>
                     </div>
                     <span className={`vendor-badge vendor-badge--${urgencyClass}`}>
-                      {item.recommendation.daysLeft <= 7 ? 'Urgent' : item.recommendation.daysLeft <= 30 ? 'Watch' : 'Healthy'}
+                      {item.urgency_label}
                     </span>
                   </div>
 
                   <div className="vendor-card__facts">
-                    <span>Expiry: <strong>{item.expiryDate}</strong></span>
-                    <span>{item.recommendation.daysLeft} days left</span>
+                    <span>Expiry: <strong>{item.expiry_date}</strong></span>
+                    <span>{item.recommendation.days_left} days left</span>
                     <span>Stock: {item.stock}</span>
                   </div>
 
                   <div className="vendor-card__stats">
                     <div>
                       <span>Sales 7d</span>
-                      <strong>{item.previousSales7Days}</strong>
+                      <strong>{item.previous_sales_7_days}</strong>
                     </div>
                     <div>
                       <span>Sales 30d</span>
-                      <strong>{item.previousSales30Days}</strong>
+                      <strong>{item.previous_sales_30_days}</strong>
                     </div>
                     <div>
                       <span>Margin</span>
-                      <strong>{item.margin}%</strong>
+                      <strong>{item.margin_percent}%</strong>
                     </div>
                   </div>
 
                   <div className="vendor-card__recommendation">
-                    <div className="vendor-card__discount">{item.recommendation.discount}% off</div>
+                    <div className="vendor-card__discount">{item.recommendation.discount_percent}% off</div>
                     <div className="vendor-card__agent-line">
                       <span>AI agent</span>
                       <strong>{item.recommendation.action}</strong>
@@ -196,6 +138,8 @@ function VendorView({ onBackToSearch }) {
               )
             })}
           </div>
+          {error && <div className="vendor-error">{error}</div>}
+          {loading && !medicines.length && <div className="vendor-empty">Loading vendor dashboard…</div>}
         </section>
 
         <aside className="vendor-side surface">
@@ -869,6 +813,10 @@ function SearchView({ onResult }) {
 export default function App() {
   const [result, setResult] = useState(null)
   const [hash, setHash] = useState(() => window.location.hash)
+  const [vendorDashboard, setVendorDashboard] = useState(null)
+  const [vendorLoading, setVendorLoading] = useState(false)
+  const [vendorError, setVendorError] = useState(null)
+  const [vendorRefreshTick, setVendorRefreshTick] = useState(0)
 
   useEffect(() => {
     const onHashChange = () => setHash(window.location.hash)
@@ -876,10 +824,36 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
+  useEffect(() => {
+    if (hash !== '#vendor') return undefined
+    const controller = new AbortController()
+    const loadVendor = async () => {
+      setVendorLoading(true)
+      setVendorError(null)
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/vendor/dashboard`, { signal: controller.signal })
+        if (!res.ok) throw new Error(await res.text())
+        setVendorDashboard(await res.json())
+      } catch (err) {
+        if (err.name !== 'AbortError') setVendorError(String(err))
+      } finally {
+        setVendorLoading(false)
+      }
+    }
+    loadVendor()
+    return () => controller.abort()
+  }, [hash, vendorRefreshTick])
+
   return (
     <div className="shell">
       {hash === '#vendor' ? (
-        <VendorView onBackToSearch={() => { window.location.hash = ''; setHash('') }} />
+        <VendorView
+          onBackToSearch={() => { window.location.hash = ''; setHash('') }}
+          dashboard={vendorDashboard}
+          loading={vendorLoading}
+          error={vendorError}
+          refresh={() => setVendorRefreshTick(v => v + 1)}
+        />
       ) : result ? (
         <ResultsView result={result} onBack={() => setResult(null)} />
       ) : (

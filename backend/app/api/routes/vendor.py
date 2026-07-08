@@ -1,0 +1,22 @@
+from fastapi import APIRouter, HTTPException
+
+from app.agents.vendor_discount_agent import VendorDiscountAgent, load_vendor_medicines
+from app.dto.vendor import VendorDashboardResponse
+from app.core.config import get_settings
+from app.providers.factory import get_llm_provider
+from app.providers.mock_provider import MockLLMProvider
+
+router = APIRouter(prefix="/vendor", tags=["vendor"])
+
+
+@router.get("/dashboard", response_model=VendorDashboardResponse, response_model_exclude_none=True)
+async def get_vendor_dashboard() -> VendorDashboardResponse:
+    settings = get_settings()
+    provider = get_llm_provider(settings)
+    if isinstance(provider, MockLLMProvider):
+        raise HTTPException(
+            status_code=503,
+            detail="Vendor dashboard needs a configured LLM provider; mock responses are disabled.",
+        )
+    agent = VendorDiscountAgent(llm_provider=provider)
+    return await agent.build_dashboard(load_vendor_medicines())
