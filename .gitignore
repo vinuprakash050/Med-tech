@@ -1,0 +1,63 @@
+# ── Python ────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# ── Environment / secrets ─────────────────────────────
+.env
+.env.*
+!.env.example
+*.env
+
+# ── Node / Frontend ───────────────────────────────────
+node_modules/
+frontend/dist/
+frontend/build/
+.npm/
+*.tsbuildinfo
+
+# ── Database ──────────────────────────────────────────
+*.sqlite
+*.sqlite3
+*.db
+
+# ── Logs ──────────────────────────────────────────────
+*.log
+logs/
+
+# ── OS ────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE / Editor ──────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# ── Alembic ───────────────────────────────────────────
+# Keep versions tracked, ignore only runtime artifacts
+alembic/__pycache__/
+
+# ── Misc ──────────────────────────────────────────────
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
