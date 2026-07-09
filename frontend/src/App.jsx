@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
+import PrescriptionUpload  from './PrescriptionUpload.jsx'
+import PrescriptionResults from './PrescriptionResults.jsx'
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000'
 
@@ -14,6 +16,20 @@ function savePct(refPrice, altPrice) {
   const a = parseFloat(altPrice)
   if (!r || isNaN(r) || isNaN(a) || a >= r) return null
   return Math.round(((r - a) / r) * 100)
+}
+
+function friendlyError(err) {
+  const raw = err instanceof Error ? err.message : String(err)
+  try {
+    const data = JSON.parse(raw)
+    if (typeof data.detail === 'string') return data.detail
+  } catch {
+    // Fall through to a compact generic message below.
+  }
+  if (raw.toLowerCase().includes('openrouter') || raw.toLowerCase().includes('llm')) {
+    return 'AI service is temporarily unavailable. Please try again in a moment.'
+  }
+  return raw.replace(/^Error:\s*/, '')
 }
 
 /* ─── Badges ──────────────────────────────────────── */
@@ -88,9 +104,10 @@ function VendorView({ onBackToSearch, dashboard, loading, error, refresh }) {
 
           <div className="vendor-grid">
             {medicines.map(item => {
+              const recommendation = item.recommendation
               const urgencyClass =
-                item.recommendation.days_left <= 7 ? 'is-urgent' :
-                item.recommendation.days_left <= 30 ? 'is-warning' :
+                recommendation?.days_left <= 7 ? 'is-urgent' :
+                recommendation?.days_left <= 30 ? 'is-warning' :
                 'is-safe'
               return (
                 <article key={item.id} className={`vendor-card ${urgencyClass}`}>
@@ -100,13 +117,13 @@ function VendorView({ onBackToSearch, dashboard, loading, error, refresh }) {
                       <p>{item.brand} · {item.category}</p>
                     </div>
                     <span className={`vendor-badge vendor-badge--${urgencyClass}`}>
-                      {item.urgency_label}
+                      {recommendation ? item.urgency_label : 'Loading AI'}
                     </span>
                   </div>
 
                   <div className="vendor-card__facts">
                     <span>Expiry: <strong>{item.expiry_date}</strong></span>
-                    <span>{item.recommendation.days_left} days left</span>
+                    <span>{recommendation ? `${recommendation.days_left} days left` : 'Loading recommendation...'}</span>
                     <span>Stock: {item.stock}</span>
                   </div>
 
@@ -126,13 +143,19 @@ function VendorView({ onBackToSearch, dashboard, loading, error, refresh }) {
                   </div>
 
                   <div className="vendor-card__recommendation">
-                    <div className="vendor-card__discount">{item.recommendation.discount_percent}% off</div>
-                    <div className="vendor-card__agent-line">
-                      <span>AI agent</span>
-                      <strong>{item.recommendation.action}</strong>
-                      <em>{item.recommendation.confidence} confidence</em>
-                    </div>
-                    <p>{item.recommendation.reason}</p>
+                    {recommendation ? (
+                      <>
+                        <div className="vendor-card__discount">{recommendation.discount_percent}% off</div>
+                        <div className="vendor-card__agent-line">
+                          <span>AI agent</span>
+                          <strong>{recommendation.action}</strong>
+                          <em>{recommendation.confidence} confidence</em>
+                        </div>
+                        <p>{recommendation.reason}</p>
+                      </>
+                    ) : (
+                      <p>Loading AI recommendation...</p>
+                    )}
                   </div>
                 </article>
               )
@@ -669,7 +692,7 @@ function ResultsView({ result, onBack }) {
 
 /* ─── Search view ─────────────────────────────────── */
 
-function SearchView({ onResult }) {
+function SearchView({ onResult, onPrescriptionResult }) {
   const [medicine, setMedicine] = useState('')
   const [genericPref, setGenericPref] = useState(true)
   const [loading, setLoading] = useState(false)
@@ -677,6 +700,7 @@ function SearchView({ onResult }) {
   const [suggestions, setSuggestions] = useState([])
   const [error, setError] = useState(null)
   const [fdaSearching, setFdaSearching] = useState(false)
+  const [activeTab, setActiveTab] = useState('search') // 'search' | 'upload'
   const suppressDropdownRef = useRef(false)
 
   async function runRecommendation(medicineName) {
@@ -692,7 +716,7 @@ function SearchView({ onResult }) {
       if (!res.ok) throw new Error(await res.text())
       onResult(await res.json())
     } catch (err) {
-      setError(String(err))
+      setError(friendlyError(err))
     } finally {
       setLoading(false)
     }
@@ -749,61 +773,101 @@ function SearchView({ onResult }) {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="search-form surface">
-        <label className="search-field">
-          Medicine name
-          <div className="search-input-wrap">
-            <input
-              value={medicine}
-              onChange={e => { suppressDropdownRef.current = false; setMedicine(e.target.value) }}
-              placeholder="e.g. Dolo 650, Calpol 500…"
-              autoComplete="off"
-            />
-            {(suggestionLoading || fdaSearching) && (
-              <span className="search-hint">
-                {fdaSearching ? 'Searching FDA…' : 'Searching…'}
-              </span>
-            )}
-          </div>
-          {fdaSearching && !suggestionLoading && (
-            <div className="fda-status">
-              <span className="fda-indicator" /> No local match — searching FDA…
-            </div>
-          )}
-          {!suppressDropdownRef.current && medicine.trim().length >= 2 && suggestions.length > 0 && (
-            <div className="suggestions-dropdown">
-              <div className="suggestions-title">Did you mean</div>
-              <ul className="suggestions-list">
-                {suggestions.map(s => (
-                  <li key={s.medicine_name}>
-                    <button
-                      type="button"
-                      className={`suggestion-item ${s.medicine_name.toLowerCase() === medicine.trim().toLowerCase() ? 'suggestion-item--active' : ''}`}
-                      onClick={() => handleSuggestionClick(s)}
-                    >
-                      <span className="suggestion-item__name">{s.medicine_name}</span>
-                      <span className="suggestion-item__meta">{s.confidence}% · {s.reason}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <div className="suggestions-footer">
-                Or press <strong>Enter</strong> to search for &ldquo;{medicine.trim()}&rdquo; directly
-              </div>
-            </div>
-          )}
-        </label>
-
-        <label className="row">
-          <input type="checkbox" checked={genericPref} onChange={e => setGenericPref(e.target.checked)} />
-          <span>Prefer generic</span>
-        </label>
-        <button type="submit" disabled={loading || !medicine.trim()} className="btn">
-          {loading ? 'Searching…' : 'Find Alternatives'}
+      {/* ── Mode tabs ── */}
+      <div className="search-tabs surface">
+        <button
+          type="button"
+          className={`search-tab ${activeTab === 'search' ? 'search-tab--active' : ''}`}
+          onClick={() => setActiveTab('search')}
+          aria-selected={activeTab === 'search'}
+        >
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.8"/>
+            <path d="M13 13l3.5 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+          </svg>
+          Search Medicine
         </button>
-      </form>
+        <button
+          type="button"
+          className={`search-tab ${activeTab === 'upload' ? 'search-tab--active' : ''}`}
+          onClick={() => setActiveTab('upload')}
+          aria-selected={activeTab === 'upload'}
+        >
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="3" y="2" width="14" height="16" rx="2.5" stroke="currentColor" strokeWidth="1.6"/>
+            <path d="M7 8l3-3 3 3M10 5v7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Upload Prescription
+        </button>
+      </div>
 
-      {error && <div className="surface error">Error: {error}</div>}
+      {/* ── Search panel ── */}
+      {activeTab === 'search' && (
+        <>
+          <form onSubmit={handleSubmit} className="search-form surface">
+            <label className="search-field">
+              Medicine name
+              <div className="search-input-wrap">
+                <input
+                  value={medicine}
+                  onChange={e => { suppressDropdownRef.current = false; setMedicine(e.target.value) }}
+                  placeholder="e.g. Dolo 650, Calpol 500…"
+                  autoComplete="off"
+                />
+                {(suggestionLoading || fdaSearching) && (
+                  <span className="search-hint">
+                    {fdaSearching ? 'Searching FDA…' : 'Searching…'}
+                  </span>
+                )}
+              </div>
+              {fdaSearching && !suggestionLoading && (
+                <div className="fda-status">
+                  <span className="fda-indicator" /> No local match — searching FDA…
+                </div>
+              )}
+              {!suppressDropdownRef.current && medicine.trim().length >= 2 && suggestions.length > 0 && (
+                <div className="suggestions-dropdown">
+                  <div className="suggestions-title">Did you mean</div>
+                  <ul className="suggestions-list">
+                    {suggestions.map(s => (
+                      <li key={s.medicine_name}>
+                        <button
+                          type="button"
+                          className={`suggestion-item ${s.medicine_name.toLowerCase() === medicine.trim().toLowerCase() ? 'suggestion-item--active' : ''}`}
+                          onClick={() => handleSuggestionClick(s)}
+                        >
+                          <span className="suggestion-item__name">{s.medicine_name}</span>
+                          <span className="suggestion-item__meta">{s.confidence}% · {s.reason}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="suggestions-footer">
+                    Or press <strong>Enter</strong> to search for &ldquo;{medicine.trim()}&rdquo; directly
+                  </div>
+                </div>
+              )}
+            </label>
+
+            <label className="row">
+              <input type="checkbox" checked={genericPref} onChange={e => setGenericPref(e.target.checked)} />
+              <span>Prefer generic</span>
+            </label>
+            <button type="submit" disabled={loading || !medicine.trim()} className="btn">
+              {loading ? 'Searching…' : 'Find Alternatives'}
+            </button>
+          </form>
+
+          {error && <div className="surface error">{error}</div>}
+        </>
+      )}
+
+      {/* ── Upload panel ── */}
+      {activeTab === 'upload' && (
+        <div className="surface rx-upload-panel">
+          <PrescriptionUpload onResult={onPrescriptionResult} />
+        </div>
+      )}
     </div>
   )
 }
@@ -812,8 +876,10 @@ function SearchView({ onResult }) {
 
 export default function App() {
   const [result, setResult] = useState(null)
+  const [prescriptionResult, setPrescriptionResult] = useState(null)
   const [hash, setHash] = useState(() => window.location.hash)
-  const [vendorDashboard, setVendorDashboard] = useState(null)
+  const [vendorRawDashboard, setVendorRawDashboard] = useState(null)
+  const [vendorAiDashboard, setVendorAiDashboard] = useState(null)
   const [vendorLoading, setVendorLoading] = useState(false)
   const [vendorError, setVendorError] = useState(null)
   const [vendorRefreshTick, setVendorRefreshTick] = useState(0)
@@ -830,19 +896,49 @@ export default function App() {
     const loadVendor = async () => {
       setVendorLoading(true)
       setVendorError(null)
+      setVendorAiDashboard(null)
       try {
-        const res = await fetch(`${API_BASE}/api/v1/vendor/dashboard`, { signal: controller.signal })
-        if (!res.ok) throw new Error(await res.text())
-        setVendorDashboard(await res.json())
+        const rawRes = await fetch(`${API_BASE}/api/v1/vendor/raw`, { signal: controller.signal })
+        if (!rawRes.ok) throw new Error(await rawRes.text())
+        setVendorRawDashboard(await rawRes.json())
+        setVendorLoading(false)
       } catch (err) {
         if (err.name !== 'AbortError') setVendorError(String(err))
-      } finally {
         setVendorLoading(false)
+        return
+      }
+
+      try {
+        const aiRes = await fetch(`${API_BASE}/api/v1/vendor/dashboard`, { signal: controller.signal })
+        if (!aiRes.ok) throw new Error(await aiRes.text())
+        setVendorAiDashboard(await aiRes.json())
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          setVendorError(`AI recommendations are unavailable right now: ${friendlyError(err)}`)
+        }
       }
     }
     loadVendor()
     return () => controller.abort()
   }, [hash, vendorRefreshTick])
+
+  const vendorDashboard = vendorRawDashboard && {
+    summary: {
+      ...(vendorRawDashboard.summary || {}),
+      ...(vendorAiDashboard?.summary || {}),
+    },
+    medicines: (vendorRawDashboard.medicines || []).map(item => {
+      const aiItem = vendorAiDashboard?.medicines?.find(candidate => candidate.id === item.id)
+      return aiItem ? { ...item, ...aiItem } : item
+    }),
+  }
+
+  function handleBackToSearch() {
+    setResult(null)
+    setPrescriptionResult(null)
+    window.location.hash = ''
+    setHash('')
+  }
 
   return (
     <div className="shell">
@@ -852,12 +948,23 @@ export default function App() {
           dashboard={vendorDashboard}
           loading={vendorLoading}
           error={vendorError}
-          refresh={() => setVendorRefreshTick(v => v + 1)}
+          refresh={() => {
+            setVendorAiDashboard(null)
+            setVendorRefreshTick(v => v + 1)
+          }}
+        />
+      ) : prescriptionResult ? (
+        <PrescriptionResults
+          data={prescriptionResult}
+          onBack={handleBackToSearch}
         />
       ) : result ? (
         <ResultsView result={result} onBack={() => setResult(null)} />
       ) : (
-        <SearchView onResult={setResult} />
+        <SearchView
+          onResult={setResult}
+          onPrescriptionResult={setPrescriptionResult}
+        />
       )}
       <footer className="footer">
         <small>Backend: {API_BASE}</small>

@@ -6,3 +6,15 @@ alembic==1.13.2
 pydantic==2.9.2
 pydantic-settings==2.5.2
 httpx==0.27.2
+
+# ── Prescription OCR dependencies ─────────────────────────────────────────────
+# Image preprocessing
+opencv-python==4.10.0.84
+numpy==1.26.4
+Pillow==10.4.0
+
+# OCR engines (EasyOCR primary; pytesseract optional fallback)
+easyocr==1.7.2
+
+# Multipart file upload support for FastAPI
+python-multipart==0.0.9

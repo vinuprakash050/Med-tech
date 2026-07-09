@@ -19,11 +19,14 @@ class Settings(BaseSettings):
     )
     openfda_base_url: str = "https://api.fda.gov"
     openfda_api_key: str | None = None
-    llm_provider: Literal["openai", "gemini", "groq", "openrouter", "mock"] = "mock"
+    llm_provider: Literal["openai", "gemini", "groq", "openrouter", "azure_openai", "mock"] = "mock"
     openai_api_key: str | None = None
     gemini_api_key: str | None = None
     groq_api_key: str | None = None
     openrouter_api_key: str | None = None
+    azure_openai_api_key: str | None = None
+    azure_openai_endpoint: str | None = None
+    azure_openai_vision_endpoint: str | None = None
     llm_model: str = "mock-model"
     cors_origins: list[str] = ["*"]
     log_level: str = "INFO"

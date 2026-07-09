@@ -20,3 +20,22 @@ class BaseLLMProvider(ABC):
         """
         combined = f"{system_prompt}\n\n{user_prompt}"
         return await self.generate_response(combined)
+
+    async def generate_response_with_image(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        image_bytes: bytes,
+        content_type: str = "image/jpeg",
+    ) -> str:
+        """
+        Generate a response that includes an image in the user message.
+        Default implementation ignores the image and falls back to text-only.
+        Subclasses that support vision should override this method.
+        """
+        return await self.generate_response_with_system(system_prompt, user_prompt)
+
+    @property
+    def supports_vision(self) -> bool:
+        """Return True if this provider can process image inputs natively."""
+        return False

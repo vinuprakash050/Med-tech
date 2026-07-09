@@ -38,6 +38,20 @@ def _strip_markdown(text: str) -> str:
     return text.strip()
 
 
+def _fallback_reasoning(requested: Medicine, alternatives: list[Medicine]) -> str:
+    if not alternatives:
+        return (
+            "No lower-priced alternative with the same salt composition and dosage "
+            "was found in the database."
+        )
+
+    return (
+        "These alternatives were selected from approved database records with the same "
+        f"salt composition and dosage as {requested.name}. They are lower-priced options, "
+        "with generic medicines preferred when requested."
+    )
+
+
 class MedicineRecommendationService:
     def __init__(
         self,
@@ -86,8 +100,10 @@ class MedicineRecommendationService:
         else:
             alternative_enrichments = [(alternative, []) for alternative in alternatives]
 
-        # AI-powered insights for the requested medicine
-        requested_insights = await self.insights_agent.build(requested_medicine)
+        # AI-powered insights for the requested medicine — built from DB fields
+        # directly (no LLM call). The fallback is thorough and instant.
+        from app.agents.medicine_insights_agent import _build_fallback_insights
+        requested_insights = _build_fallback_insights(requested_medicine)
 
         requested_response = MedicineResponse.model_validate(requested_medicine).model_copy(
             update={
@@ -113,10 +129,20 @@ class MedicineRecommendationService:
             llm_reasoning = await self.llm_provider.generate_response(prompt)
             logger.info("MedicineRecommendationService LLM call completed provider=%s", type(self.llm_provider).__name__)
             llm_reasoning = _strip_markdown(llm_reasoning)
-        except LLMProviderError:
-            raise
+        except LLMProviderError as exc:
+            logging.getLogger("app.llm").warning(
+                "MedicineRecommendationService LLM call failed provider=%s: %s",
+                type(self.llm_provider).__name__,
+                exc,
+            )
+            llm_reasoning = _fallback_reasoning(requested_medicine, alternatives)
         except Exception as exc:  # pragma: no cover
-            raise LLMProviderError(f"Unexpected LLM provider failure: {exc}") from exc
+            logging.getLogger("app.llm").warning(
+                "MedicineRecommendationService unexpected LLM failure provider=%s: %s",
+                type(self.llm_provider).__name__,
+                exc,
+            )
+            llm_reasoning = _fallback_reasoning(requested_medicine, alternatives)
 
         alternative_responses = []
         for alternative, openfda_requests in alternative_enrichments:
@@ -160,14 +186,12 @@ class MedicineRecommendationService:
         alternative: Medicine,
         openfda_requests: list[str] | None = None,
     ) -> AlternativeMedicineResponse:
+        from app.agents.medicine_insights_agent import _build_fallback_insights
         alternative_payload = MedicineResponse.model_validate(alternative).model_dump(
             exclude={"openfda_requests", "medicine_insights"}
         )
-        # AI-powered insights for this alternative
-        alt_insights = await self.insights_agent.build(
-            alternative,
-            reference_medicine=requested,
-        )
+        # Build insights from DB fields — no LLM call, instant
+        alt_insights = _build_fallback_insights(alternative, reference_medicine=requested)
         return AlternativeMedicineResponse(
             **alternative_payload,
             price_difference=Decimal(requested.price) - Decimal(alternative.price),

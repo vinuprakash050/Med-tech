@@ -1,4 +1,5 @@
 from app.core.config import Settings
+from app.providers.azure_openai_provider import AzureOpenAIProvider
 from app.providers.base import BaseLLMProvider
 from app.providers.gemini_provider import GeminiProvider
 from app.providers.groq_provider import GroqProvider
@@ -16,4 +17,10 @@ def get_llm_provider(settings: Settings) -> BaseLLMProvider:
         return GroqProvider(api_key=settings.groq_api_key, model=settings.llm_model)
     if settings.llm_provider == "openrouter":
         return OpenRouterProvider(api_key=settings.openrouter_api_key, model=settings.llm_model)
+    if settings.llm_provider == "azure_openai":
+        return AzureOpenAIProvider(
+            api_key=settings.azure_openai_api_key,
+            endpoint=settings.azure_openai_endpoint,
+            vision_endpoint=settings.azure_openai_vision_endpoint,
+        )
     return MockLLMProvider()

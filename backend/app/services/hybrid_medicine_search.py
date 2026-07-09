@@ -167,7 +167,9 @@ class HybridMedicineSearchService:
         if exact_normalized is not None:
             return exact_normalized
 
-        # Hybrid search for best candidate
+        # Hybrid search for best candidate — take top DB result directly.
+        # The fuzzy scorer already ranks by string similarity + partial match,
+        # so candidate_names[0] is the best match without needing an LLM call.
         hybrid_result = await self.suggest(query, limit=5)
         if not hybrid_result.suggestions:
             return None
@@ -176,10 +178,7 @@ class HybridMedicineSearchService:
         if not candidate_names:
             return None
 
-        best_name = await self._ask_llm_for_best(query, candidate_names)
-        if best_name is None:
-            best_name = candidate_names[0]
-
+        best_name = candidate_names[0]
         return await self.repository.get_by_name(best_name)
 
     async def _search_db(self, normalized_query: str, limit: int) -> list[_RankedCandidate]:
@@ -424,35 +423,12 @@ class HybridMedicineSearchService:
         candidates: list[_RankedCandidate],
         limit: int,
     ) -> list[_RankedCandidate]:
-        """Rank candidates and use AI for semantic disambiguation."""
+        """Rank candidates by fuzzy score — no LLM call needed here."""
         if not candidates:
             return []
 
-        # Sort by score first
         candidates.sort(key=lambda c: (-c.score, c.medicine.is_generic is False, c.medicine.price, c.medicine.name))
-
-        top_candidates = candidates[: min(limit, len(candidates))]
-
-        # Ask AI for best match among top candidates
-        ai_choice = await self._ask_llm_for_best(
-            normalized_query,
-            [c.medicine.name for c in top_candidates],
-        )
-        if ai_choice:
-            for i, candidate in enumerate(top_candidates):
-                if candidate.medicine.name == ai_choice:
-                    boosted_score = min(candidate.score + 0.1, 1.0)
-                    top_candidates[i] = _RankedCandidate(
-                        medicine=candidate.medicine,
-                        score=boosted_score,
-                        reason=f"{candidate.reason}, AI confirmed",
-                        source_tag=candidate.source_tag,
-                    )
-                    break
-
-            top_candidates.sort(key=lambda c: (-c.score, c.medicine.is_generic is False, c.medicine.price, c.medicine.name))
-
-        return top_candidates[:limit]
+        return candidates[:limit]
 
     async def _ask_llm_for_best(
         self,

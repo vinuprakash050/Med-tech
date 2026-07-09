@@ -35,6 +35,7 @@ class OpenRouterProvider(BaseLLMProvider):
                 {"role": "user", "content": user_prompt},
             ],
             "temperature": 0.1,
+            "max_tokens": 900,
         }
 
         logger.info(

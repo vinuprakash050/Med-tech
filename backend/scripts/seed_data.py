@@ -1,104 +1,39 @@
 import asyncio
+import json
 from decimal import Decimal
+from pathlib import Path
 
 from sqlalchemy import delete
 
 from app.core.database import AsyncSessionLocal
 from app.models.medicine import Medicine
 
+DATA_PATH = Path(__file__).resolve().parent.parent / "app" / "data" / "medicines.json"
 
-SEED_MEDICINES = [
-    {
-        "name": "Dolo 650",
-        "salt_composition": "Paracetamol",
-        "dosage": "650mg",
-        "manufacturer": "Micro Labs",
-        "medicine_type": "tablet",
-        "price": Decimal("35.00"),
-        "is_generic": False,
-        "approval_status": "approved",
-        "description": "Used for fever and mild pain relief.",
-        "common_side_effects": "nausea,drowsiness,headache",
-        "allergy_warnings": "avoid if allergic to paracetamol",
-        "precautions": "consult doctor if pregnant",
-    },
-    {
-        "name": "Pacimol 650",
-        "salt_composition": "Paracetamol",
-        "dosage": "650mg",
-        "manufacturer": "Ipca Laboratories",
-        "medicine_type": "tablet",
-        "price": Decimal("18.00"),
-        "is_generic": True,
-        "approval_status": "approved",
-        "description": "Generic paracetamol tablet for pain and fever.",
-        "common_side_effects": "nausea,drowsiness,headache",
-        "allergy_warnings": "avoid if allergic to paracetamol",
-        "precautions": "consult doctor if pregnant",
-    },
-    {
-        "name": "Crocin 650",
-        "salt_composition": "Paracetamol",
-        "dosage": "650mg",
-        "manufacturer": "GSK",
-        "medicine_type": "tablet",
-        "price": Decimal("24.00"),
-        "is_generic": False,
-        "approval_status": "approved",
-        "description": "Paracetamol-based fever reducer.",
-        "common_side_effects": "nausea,drowsiness,headache",
-        "allergy_warnings": "avoid if allergic to paracetamol",
-        "precautions": "consult doctor if pregnant",
-    },
-    {
-        "name": "Calpol 650",
-        "salt_composition": "Paracetamol",
-        "dosage": "650mg",
-        "manufacturer": "GSK",
-        "medicine_type": "tablet",
-        "price": Decimal("30.00"),
-        "is_generic": False,
-        "approval_status": "approved",
-        "description": "Paracetamol tablet indicated for fever.",
-        "common_side_effects": "nausea,drowsiness,headache",
-        "allergy_warnings": "avoid if allergic to paracetamol",
-        "precautions": "consult doctor if pregnant",
-    },
-    {
-        "name": "Azithromycin 500",
-        "salt_composition": "Azithromycin",
-        "dosage": "500mg",
-        "manufacturer": "Sun Pharma",
-        "medicine_type": "tablet",
-        "price": Decimal("82.00"),
-        "is_generic": False,
-        "approval_status": "approved",
-        "description": "Macrolide antibiotic.",
-        "common_side_effects": "nausea,diarrhea,stomach upset",
-        "allergy_warnings": "avoid if allergic to azithromycin or other macrolide antibiotics",
-        "precautions": "consult doctor if you have liver problems",
-    },
-    {
-        "name": "Azee 500",
-        "salt_composition": "Azithromycin",
-        "dosage": "500mg",
-        "manufacturer": "Cipla",
-        "medicine_type": "tablet",
-        "price": Decimal("65.00"),
-        "is_generic": True,
-        "approval_status": "approved",
-        "description": "Azithromycin generic alternative.",
-        "common_side_effects": "nausea,diarrhea,stomach upset",
-        "allergy_warnings": "avoid if allergic to azithromycin or other macrolide antibiotics",
-        "precautions": "consult doctor if you have liver problems",
-    },
-]
+
+def _load_seed_medicines() -> list[dict]:
+    payload = json.loads(DATA_PATH.read_text(encoding="utf-8"))
+    medicines = payload.get("medicines", [])
+    if not isinstance(medicines, list):
+        raise ValueError("medicines.json must contain a top-level 'medicines' array")
+    return medicines
 
 
 async def seed() -> None:
+    seed_medicines = _load_seed_medicines()
     async with AsyncSessionLocal() as session:
         await session.execute(delete(Medicine))
-        session.add_all([Medicine(**payload) for payload in SEED_MEDICINES])
+        session.add_all(
+            [
+                Medicine(
+                    **{
+                        **payload,
+                        "price": Decimal(str(payload["price"])),
+                    }
+                )
+                for payload in seed_medicines
+            ]
+        )
         await session.commit()
 
 
