@@ -263,3 +263,129 @@ npm run dev -- --host
 → Make sure backend starts with `--host 0.0.0.0`
 → Set `VITE_API_BASE` in frontend `.env` to your Wi-Fi IP (not localhost)
 → Check Windows Firewall allows port 8000 and 5173
+
+---
+
+## New Features — Medical Devices Module
+
+This section documents the device features added in the latest development session.
+
+---
+
+### Overview
+
+A full medical devices module was added alongside the existing medicine search. It covers two distinct experiences:
+
+- **User flow** — device results appear inside the search dropdown as the user types; clicking opens a polished device detail page
+- **Vendor flow** — a dedicated Device Feedback Analyser page automatically runs AI analysis on user survey data for every device model
+
+---
+
+### Backend changes
+
+#### 1. Device data (`backend/app/agents/device_data.json`)
+
+A large dummy dataset containing:
+
+- **2 device categories** — Hearing Aid, Pacemaker
+- **6 device models** — 3 per category (e.g. ClearSound Pro 360, CardioSync Elite DR)
+- **140 user survey feedback entries** — 20–30 reviews per model with ratings and written comments
+
+#### 2. Device DTOs (`backend/app/dto/device.py`)
+
+Pydantic models split by audience:
+
+| Model | Purpose |
+|---|---|
+| `DeviceModelResponse` | Single model card for users |
+| `DeviceResponse` | Full device with all models |
+| `DeviceSearchResultItem` | Slim card for search dropdown |
+| `DeviceSearchResponse` | Wrapper for search endpoint |
+| `FeedbackEntry` | Raw survey response |
+| `DeviceFeedbackAnalysis` | AI-generated pros/cons for vendors |
+
+#### 3. Device Feedback Agent (`backend/app/agents/device_feedback_agent.py`)
+
+An LLM agent that receives all survey feedback for a device model and returns structured analysis:
+
+- Sends feedback to the LLM via `generate_response_with_system()`
+- Returns: positives list, negatives list, sentiment, summary, top improvement area
+- Falls back to keyword heuristic analysis when mock mode or LLM fails
+- Uses `lru_cache` JSON loader — same pattern as `vendor_discount_agent`
+
+#### 4. Device routes (`backend/app/api/routes/devices.py`)
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /api/v1/devices?q=` | Keyword search — returns matching device models |
+| `GET /api/v1/devices/all` | Full catalogue — used by vendor page |
+| `GET /api/v1/devices/{device_id}` | Single device detail |
+| `GET /api/v1/devices/{model_id}/feedback-analysis` | AI feedback analysis for a model |
+
+Router registered in `backend/app/main.py`.
+
+#### 5. Recommendation prompt update (`backend/app/prompts/recommendation.py`)
+
+The "Why these alternatives?" LLM prompt was rewritten to produce a maximum of **3 sentences** as a single flowing paragraph — covering shared salt composition, price saving range, and one standout detail. The previous prompt produced one sentence per medicine which was verbose.
+
+---
+
+### Frontend changes
+
+#### Search page — device results in dropdown
+
+- As the user types, device search fires in parallel with medicine suggestions (debounced 300ms)
+- Matching device models appear inside the existing "Did you mean" dropdown under a **Medical Devices** section header
+- Each device entry shows: icon, model name, brand badge, price, star rating
+- Clicking a device navigates to the device detail page (not the medicine recommendation flow)
+
+#### Device Detail page (user-facing)
+
+Accessed by clicking a device in the search dropdown.
+
+- Full-width blue gradient hero with device icon, model name, brand, star rating, and price
+- Two info cards below: **Uses & Indications** and **Unique Characteristics**
+- Back button returns to the search page
+
+#### Vendor navigation
+
+Two buttons added to the search page hero (below the genRx logo):
+
+- **Vendor Dashboard** — navigates to `#vendor` (existing medicine expiry/discount planner)
+- **Device Feedback** — navigates to `#vendor-devices` (new device feedback analyser)
+
+The same "Device Feedback" button also appears inside the existing Vendor Dashboard hero.
+
+#### Device Feedback Analyser page (vendor-facing)
+
+Accessed via `#vendor-devices`.
+
+- Full-width blue gradient header showing model count and live "analysed" counter
+- On load, automatically fires all 6 feedback analysis API calls in parallel — no manual button needed
+- Each model card shows a spinner while loading, then displays the full AI analysis:
+  - Sentiment badge (Highly Positive / Positive / Mixed / Negative)
+  - Review count and average rating
+  - AI summary paragraph
+  - **What users love** — frequency bars for positive themes
+  - **Pain points** — frequency bars for negative themes
+  - Top improvement area highlight (yellow box)
+- Clicking a card navigates to the device detail page; back button returns to the analyser
+
+#### Vendor Dashboard — pagination
+
+The medicine grid on the vendor dashboard now shows **3 cards per page** with numbered pagination controls and a "Page X of Y · N total" counter.
+
+---
+
+### File summary
+
+| File | Change |
+|---|---|
+| `backend/app/agents/device_data.json` | New — dummy device + feedback dataset |
+| `backend/app/dto/device.py` | New — device DTOs |
+| `backend/app/agents/device_feedback_agent.py` | New — AI feedback analysis agent |
+| `backend/app/api/routes/devices.py` | New — device API routes |
+| `backend/app/main.py` | Updated — registered device router |
+| `backend/app/prompts/recommendation.py` | Updated — concise 3-sentence reasoning prompt |
+| `frontend/src/App.jsx` | Updated — device search, detail view, vendor devices page, pagination |
+| `frontend/src/styles.css` | Updated — all device feature styles |

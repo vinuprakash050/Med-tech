@@ -194,7 +194,9 @@ export default function PrescriptionUpload({ onResult }) {
                 onClick={e => { e.stopPropagation(); handleClear() }}
                 aria-label="Remove selected file"
               >
-                ✕
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                </svg>
               </button>
             )}
           </div>

@@ -9,7 +9,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 
 
 class Settings(BaseSettings):
-    app_name: str = "Medicine Alternative Recommendation API"
+    app_name: str = "genRx API"
     app_version: str = "0.1.0"
     app_env: str = "development"
     debug: bool = True

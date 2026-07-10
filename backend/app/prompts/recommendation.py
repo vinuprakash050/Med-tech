@@ -40,15 +40,20 @@ def build_recommendation_prompt(
     )
 
     return (
-        "You are explaining why these medicines are suitable alternatives.\n\n"
+        "You are a clinical pharmacist explaining medicine alternatives to a patient.\n\n"
         "Requested medicine:\n"
         f"  {_medicine_line(requested_medicine)}\n\n"
         "Alternatives:\n"
         f"{alts_block}\n\n"
-        "TASK: Write exactly 2-3 sentences explaining why the alternatives are acceptable.\n"
-        "FOCUS ON: matching salt composition, same dosage, lower price, generic status.\n"
-        "DO NOT: list every medicine individually, repeat the medicine names more than once each, "
-        "mention warnings or side effects, diagnose or prescribe.\n"
-        "FORMAT: Plain prose, no markdown, no bullet points, no headers.\n"
-        "LENGTH: 2-3 sentences maximum. Be direct and concise."
+        "TASK: Write a single plain-text explanation of 2 to 3 sentences maximum.\n\n"
+        "In those sentences cover:\n"
+        "  - The shared salt composition and dosage that makes all alternatives safe substitutes.\n"
+        "  - The overall price range of savings available across the alternatives.\n"
+        "  - One specific standout detail (e.g. the cheapest option, the only brand option, or the generic with the best saving).\n\n"
+        "RULES:\n"
+        "- Maximum 3 sentences total. No more.\n"
+        "- Do NOT list or mention each alternative by name individually.\n"
+        "- Do NOT use markdown, bullet points, or headers. Plain prose only.\n"
+        "- Do NOT mention warnings, side effects, or give medical advice.\n"
+        "- Be specific: use actual salt name, dosage, and price figures from the data."
     )

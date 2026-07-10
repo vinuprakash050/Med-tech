@@ -1,0 +1,300 @@
+{
+  "devices": [
+    {
+      "id": "ha-001",
+      "name": "Hearing Aid",
+      "category": "hearing_aid",
+      "search_keywords": ["hearing aid", "hearing device", "deaf aid", "hearing loss", "ear device", "hearing amplifier"],
+      "models": [
+        {
+          "model_id": "ha-001-m1",
+          "model_name": "ClearSound Pro 360",
+          "brand": "Audivance",
+          "price": 18500,
+          "rating": 4.6,
+          "image_icon": "hearing",
+          "uses": [
+            "Mild to severe sensorineural hearing loss",
+            "Age-related hearing decline (presbycusis)",
+            "Noise-induced hearing loss",
+            "Single-sided deafness with CROS support"
+          ],
+          "unique_characteristics": [
+            "360-degree directional microphone array with 12 channels",
+            "Automatic environment detection — switches between 5 scene modes",
+            "Bluetooth 5.2 direct streaming from iOS and Android",
+            "Rechargeable lithium-ion — 24 hours on a single charge",
+            "IP68 waterproof and dustproof rating"
+          ]
+        },
+        {
+          "model_id": "ha-001-m2",
+          "model_name": "AudiClear BTE Plus",
+          "brand": "HearWell",
+          "price": 9800,
+          "rating": 4.1,
+          "image_icon": "hearing",
+          "uses": [
+            "Moderate hearing loss in noisy environments",
+            "Children and elderly users requiring easy handling",
+            "Post-surgical rehabilitation",
+            "Conductive hearing loss"
+          ],
+          "unique_characteristics": [
+            "Behind-the-ear (BTE) design for easy insertion and removal",
+            "6-channel digital signal processing",
+            "T-coil (telecoil) for loop system compatibility",
+            "Manual volume control wheel",
+            "Compatible with remote control accessory"
+          ]
+        },
+        {
+          "model_id": "ha-001-m3",
+          "model_name": "SlimFit ITC Nano",
+          "brand": "NanoHear",
+          "price": 24000,
+          "rating": 4.4,
+          "image_icon": "hearing",
+          "uses": [
+            "Mild to moderate hearing loss requiring discreet wear",
+            "Active lifestyle users",
+            "Professional settings requiring invisible solution",
+            "Bilateral fitting for symmetrical loss"
+          ],
+          "unique_characteristics": [
+            "In-the-canal (ITC) completely invisible form factor",
+            "AI-powered noise suppression reduces wind noise by 95%",
+            "Adaptive feedback cancellation",
+            "10-day battery life on single charge",
+            "Companion app with audiogram self-assessment"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pm-001",
+      "name": "Pacemaker",
+      "category": "pacemaker",
+      "search_keywords": ["pacemaker", "cardiac device", "heart pacemaker", "arrhythmia device", "heart rhythm device", "bradycardia device"],
+      "models": [
+        {
+          "model_id": "pm-001-m1",
+          "model_name": "CardioSync Elite DR",
+          "brand": "MedPulse",
+          "price": 185000,
+          "rating": 4.8,
+          "image_icon": "pacemaker",
+          "uses": [
+            "Sick sinus syndrome (SSS)",
+            "AV block (2nd and 3rd degree)",
+            "Bradycardia with syncope episodes",
+            "Post-cardiac ablation rhythm support"
+          ],
+          "unique_characteristics": [
+            "Dual-chamber (DDD) pacing for synchronized atrial and ventricular pacing",
+            "MRI-conditional up to 1.5T and 3T — safe for scans",
+            "10-year projected battery longevity",
+            "Remote monitoring via CardioConnect cloud platform",
+            "Automatic capture management — adjusts pacing threshold daily"
+          ]
+        },
+        {
+          "model_id": "pm-001-m2",
+          "model_name": "RhythmGuard Single VVI",
+          "brand": "CardioTech",
+          "price": 95000,
+          "rating": 4.3,
+          "image_icon": "pacemaker",
+          "uses": [
+            "Chronic atrial fibrillation with slow ventricular rate",
+            "Ventricular bradycardia",
+            "Permanent AF patients needing ventricular support",
+            "Elderly patients with single-chamber needs"
+          ],
+          "unique_characteristics": [
+            "Single-chamber VVI pacing — simpler implant procedure",
+            "Compact titanium casing — smallest in class at 7.2cc",
+            "8-year battery life with standard pacing output",
+            "Bluetooth low-energy diagnostics transmission",
+            "Anti-interference shielding for industrial environments"
+          ]
+        },
+        {
+          "model_id": "pm-001-m3",
+          "model_name": "NovaPace Leadless CRT",
+          "brand": "InnoCardio",
+          "price": 320000,
+          "rating": 4.7,
+          "image_icon": "pacemaker",
+          "uses": [
+            "Heart failure with reduced ejection fraction (HFrEF)",
+            "Left bundle branch block (LBBB)",
+            "Patients with high infection risk from transvenous leads",
+            "Cardiac resynchronization therapy (CRT)"
+          ],
+          "unique_characteristics": [
+            "Leadless design — eliminates lead-related complications entirely",
+            "Biventricular pacing for cardiac resynchronization",
+            "AI-driven adaptive CRT algorithm — learns patient activity patterns",
+            "Wireless subcutaneous monitoring sensor",
+            "Retrievable and re-deployable design"
+          ]
+        }
+      ]
+    }
+  ],
+  "feedback": {
+    "ha-001-m1": [
+      {"user_id": "u001", "rating": 5, "comment": "The 360-degree microphone is genuinely impressive. I can follow conversations in crowded restaurants without straining.", "date": "2025-11-02"},
+      {"user_id": "u002", "rating": 5, "comment": "Bluetooth streaming from my phone is seamless. Music sounds natural, not tinny.", "date": "2025-11-08"},
+      {"user_id": "u003", "rating": 4, "comment": "Battery lasts the full day as advertised. Charging case is a nice touch but a bit bulky for a pocket.", "date": "2025-11-15"},
+      {"user_id": "u004", "rating": 3, "comment": "Sound quality is excellent but the app keeps disconnecting on Android. Connectivity needs a fix.", "date": "2025-11-20"},
+      {"user_id": "u005", "rating": 5, "comment": "IP68 rating is not just marketing. I wore it in heavy rain and during swimming without any issues.", "date": "2025-12-01"},
+      {"user_id": "u006", "rating": 4, "comment": "Environment detection is smart — transitions between quiet and noisy modes are nearly instant.", "date": "2025-12-05"},
+      {"user_id": "u007", "rating": 2, "comment": "Customer support was unhelpful when I had a fitting issue. Took 3 weeks to resolve.", "date": "2025-12-10"},
+      {"user_id": "u008", "rating": 5, "comment": "As an audiologist I recommend this to patients regularly. The 12-channel processing is state of the art at this price.", "date": "2025-12-14"},
+      {"user_id": "u009", "rating": 4, "comment": "Very comfortable for all-day wear. Forgot I had it on for most of the day.", "date": "2025-12-19"},
+      {"user_id": "u010", "rating": 3, "comment": "The auto scene switching sometimes misidentifies environments. Switched to music mode in a meeting.", "date": "2025-12-22"},
+      {"user_id": "u011", "rating": 5, "comment": "I have worn hearing aids for 20 years. This is the clearest speech reproduction I have experienced.", "date": "2026-01-03"},
+      {"user_id": "u012", "rating": 4, "comment": "Price is high but justified given the technology. Comparable models cost twice as much.", "date": "2026-01-07"},
+      {"user_id": "u013", "rating": 5, "comment": "The feedback cancellation completely eliminates the whistling I had with my old device.", "date": "2026-01-11"},
+      {"user_id": "u014", "rating": 2, "comment": "The companion app UI is confusing for elderly users. My mother could not use it without help.", "date": "2026-01-15"},
+      {"user_id": "u015", "rating": 5, "comment": "Wind noise reduction is outstanding. I cycle daily and this is the first device that handles wind well.", "date": "2026-01-20"},
+      {"user_id": "u016", "rating": 4, "comment": "Great sound quality. Wish the charging case had a display showing remaining charge.", "date": "2026-01-25"},
+      {"user_id": "u017", "rating": 3, "comment": "Works well but the device is slightly large for ITE category. Visibility is a concern.", "date": "2026-02-01"},
+      {"user_id": "u018", "rating": 5, "comment": "Streaming podcasts and calls is crystal clear. The latency is practically zero.", "date": "2026-02-06"},
+      {"user_id": "u019", "rating": 4, "comment": "Ear tip selection could be better. Took multiple visits to audiologist to get the fit right.", "date": "2026-02-10"},
+      {"user_id": "u020", "rating": 5, "comment": "My teenage son has severe hearing loss and this has transformed his school experience.", "date": "2026-02-15"},
+      {"user_id": "u021", "rating": 3, "comment": "Firmware update in January caused temporary connectivity loss. Stressful until resolved.", "date": "2026-02-18"},
+      {"user_id": "u022", "rating": 5, "comment": "The self-fitting app is brilliant. Saved two audiologist visits.", "date": "2026-02-22"},
+      {"user_id": "u023", "rating": 4, "comment": "Rechargeable is the way to go. Never fumbling with tiny batteries again.", "date": "2026-03-01"},
+      {"user_id": "u024", "rating": 2, "comment": "Had a hardware defect after 4 months. Replacement took 6 weeks.", "date": "2026-03-05"},
+      {"user_id": "u025", "rating": 5, "comment": "Binaural pairing is rock solid. Both ears sync instantly when I take them out of the case.", "date": "2026-03-10"},
+      {"user_id": "u026", "rating": 4, "comment": "Speech intelligibility in noise is significantly better than my previous device costing more.", "date": "2026-03-14"},
+      {"user_id": "u027", "rating": 5, "comment": "Brilliant for phone calls. The caller sounds like they are in the same room.", "date": "2026-03-18"},
+      {"user_id": "u028", "rating": 3, "comment": "Touch controls on the device are overly sensitive. Often accidentally changed volume.", "date": "2026-03-22"},
+      {"user_id": "u029", "rating": 4, "comment": "Warranty service was prompt. Minor issue resolved within a week.", "date": "2026-03-28"},
+      {"user_id": "u030", "rating": 5, "comment": "After 6 months of use, still performing exactly as on day one. Build quality is excellent.", "date": "2026-04-02"}
+    ],
+    "ha-001-m2": [
+      {"user_id": "u031", "rating": 4, "comment": "BTE design is extremely easy for my 78-year-old mother to put on and remove each day.", "date": "2025-10-12"},
+      {"user_id": "u032", "rating": 3, "comment": "Sound is decent but noticeably lower quality than premium models when tested side by side.", "date": "2025-10-18"},
+      {"user_id": "u033", "rating": 4, "comment": "The T-coil works perfectly at our local theatre's loop system. Great for community events.", "date": "2025-10-25"},
+      {"user_id": "u034", "rating": 5, "comment": "Excellent value at this price. My father refused to wear hearing aids before — this one he accepts.", "date": "2025-11-01"},
+      {"user_id": "u035", "rating": 2, "comment": "The volume wheel is stiff and difficult to operate for arthritic hands.", "date": "2025-11-06"},
+      {"user_id": "u036", "rating": 4, "comment": "6 channels are enough for everyday listening. I do not need high-end features.", "date": "2025-11-12"},
+      {"user_id": "u037", "rating": 3, "comment": "Noisy environments are a challenge. Struggle to follow conversation in supermarkets.", "date": "2025-11-19"},
+      {"user_id": "u038", "rating": 5, "comment": "The remote control accessory is excellent. My father uses it to adjust volume from his pocket.", "date": "2025-11-26"},
+      {"user_id": "u039", "rating": 4, "comment": "Battery life on standard size 13 batteries is about 2 weeks. Reasonable for the price.", "date": "2025-12-04"},
+      {"user_id": "u040", "rating": 2, "comment": "The tube connecting device to ear mold cracked after 8 months. Replacement part hard to source.", "date": "2025-12-11"},
+      {"user_id": "u041", "rating": 4, "comment": "Solid everyday hearing aid. Does the job reliably without fuss.", "date": "2025-12-18"},
+      {"user_id": "u042", "rating": 3, "comment": "Would benefit from Bluetooth but understandably absent at this price point.", "date": "2025-12-24"},
+      {"user_id": "u043", "rating": 5, "comment": "Audiologist highly recommended this for my post-surgery rehabilitation. Progress has been rapid.", "date": "2026-01-05"},
+      {"user_id": "u044", "rating": 4, "comment": "Good fitting options with multiple dome sizes included in the box.", "date": "2026-01-12"},
+      {"user_id": "u045", "rating": 3, "comment": "Feedback whistling occurs occasionally when phone is held close to ear.", "date": "2026-01-19"},
+      {"user_id": "u046", "rating": 4, "comment": "Durable and reliable. Have dropped it multiple times without issue.", "date": "2026-01-26"},
+      {"user_id": "u047", "rating": 2, "comment": "No rechargeable option is a significant drawback for modern users.", "date": "2026-02-03"},
+      {"user_id": "u048", "rating": 5, "comment": "Perfectly suited for conductive hearing loss. My ENT specialist recommended it specifically.", "date": "2026-02-08"},
+      {"user_id": "u049", "rating": 4, "comment": "Setup was straightforward with the printed guide included.", "date": "2026-02-14"},
+      {"user_id": "u050", "rating": 3, "comment": "Slightly bulky appearance but functional. Cosmetics are secondary for my father.", "date": "2026-02-20"}
+    ],
+    "ha-001-m3": [
+      {"user_id": "u051", "rating": 5, "comment": "Completely invisible in the canal. Colleagues and clients do not know I wear a hearing aid at all.", "date": "2025-10-08"},
+      {"user_id": "u052", "rating": 4, "comment": "AI noise suppression in wind is genuinely 90 percent better than my previous device.", "date": "2025-10-15"},
+      {"user_id": "u053", "rating": 5, "comment": "The self-assessment audiogram in the app is accurate. Matched my professional test closely.", "date": "2025-10-22"},
+      {"user_id": "u054", "rating": 3, "comment": "Invisible form factor means no volume control button. Adjustments rely entirely on the app.", "date": "2025-11-02"},
+      {"user_id": "u055", "rating": 5, "comment": "10-day battery is a revelation. I charge it on weekends only.", "date": "2025-11-09"},
+      {"user_id": "u056", "rating": 4, "comment": "Feedback cancellation is outstanding. Zero whistling even with glasses on.", "date": "2025-11-16"},
+      {"user_id": "u057", "rating": 2, "comment": "Very small size makes it easy to lose. Dropped one and spent an hour searching.", "date": "2025-11-23"},
+      {"user_id": "u058", "rating": 5, "comment": "Sound quality rivals devices costing three times more. Exceptional engineering.", "date": "2025-12-01"},
+      {"user_id": "u059", "rating": 4, "comment": "Bilateral fitting is perfectly synchronized. Cannot distinguish any lag between ears.", "date": "2025-12-07"},
+      {"user_id": "u060", "rating": 3, "comment": "Not suitable for severe hearing loss. Only useful for mild to moderate range as stated.", "date": "2025-12-14"},
+      {"user_id": "u061", "rating": 5, "comment": "Professional meetings transformed. I contribute confidently now without misunderstanding speech.", "date": "2025-12-21"},
+      {"user_id": "u062", "rating": 4, "comment": "App is intuitive and the audiogram feature saved me an unnecessary clinic visit.", "date": "2026-01-04"},
+      {"user_id": "u063", "rating": 2, "comment": "ITC fitting requires a professional impression. The process was uncomfortable and expensive.", "date": "2026-01-10"},
+      {"user_id": "u064", "rating": 5, "comment": "Active lifestyle friendly. Wore during a gym session and hiking. Zero issues.", "date": "2026-01-17"},
+      {"user_id": "u065", "rating": 4, "comment": "Premium pricing is justified. The technology packed into such a small device is remarkable.", "date": "2026-01-24"},
+      {"user_id": "u066", "rating": 3, "comment": "Not ideal for elderly users who struggle with very small devices.", "date": "2026-01-30"},
+      {"user_id": "u067", "rating": 5, "comment": "The confidence it gives me in social situations is priceless. Worth every rupee.", "date": "2026-02-05"},
+      {"user_id": "u068", "rating": 4, "comment": "Customer service was responsive and resolved a pairing issue remotely.", "date": "2026-02-11"},
+      {"user_id": "u069", "rating": 3, "comment": "No direct Bluetooth streaming — relies on an intermediary streamer device.", "date": "2026-02-17"},
+      {"user_id": "u070", "rating": 5, "comment": "Completely changed my quality of life. Cannot imagine going back to my old device.", "date": "2026-02-23"}
+    ],
+    "pm-001-m1": [
+      {"user_id": "u071", "rating": 5, "comment": "MRI compatibility was the decisive factor. Had two scans since implant with zero complications.", "date": "2025-09-15"},
+      {"user_id": "u072", "rating": 5, "comment": "Remote monitoring caught an atrial flutter episode before I felt any symptoms. Potentially life-saving.", "date": "2025-09-22"},
+      {"user_id": "u073", "rating": 4, "comment": "Dual-chamber pacing has completely eliminated the dizziness I had with a single-chamber device.", "date": "2025-09-29"},
+      {"user_id": "u074", "rating": 5, "comment": "10-year battery projection means I can plan for a decade without replacement surgery.", "date": "2025-10-06"},
+      {"user_id": "u075", "rating": 4, "comment": "The automatic capture management means the cardiologist adjusts settings less frequently.", "date": "2025-10-14"},
+      {"user_id": "u076", "rating": 3, "comment": "CardioConnect app is functional but the interface feels dated compared to modern health apps.", "date": "2025-10-21"},
+      {"user_id": "u077", "rating": 5, "comment": "Implant procedure was straightforward according to my surgeon. Device programmed in 20 minutes.", "date": "2025-10-28"},
+      {"user_id": "u078", "rating": 4, "comment": "Six months post-implant and energy levels are dramatically improved. I exercise regularly again.", "date": "2025-11-04"},
+      {"user_id": "u079", "rating": 5, "comment": "My cardiologist specifically chose this for the remote monitoring capability. Reduces clinic visits.", "date": "2025-11-11"},
+      {"user_id": "u080", "rating": 2, "comment": "Device generated a false arrhythmia alert that caused significant anxiety. Required recalibration.", "date": "2025-11-18"},
+      {"user_id": "u081", "rating": 5, "comment": "Three years since implant. Zero issues. Battery indicator shows 7 years remaining.", "date": "2025-11-25"},
+      {"user_id": "u082", "rating": 4, "comment": "Rate response algorithm adapts intelligently during exercise. Heart rate appropriate throughout gym sessions.", "date": "2025-12-02"},
+      {"user_id": "u083", "rating": 5, "comment": "The most reliable device I have had. Previous pacemaker required two revisions in 5 years.", "date": "2025-12-09"},
+      {"user_id": "u084", "rating": 3, "comment": "CardioConnect remote transmitter is bulky. A phone-based solution would be preferable.", "date": "2025-12-16"},
+      {"user_id": "u085", "rating": 5, "comment": "Complete AV block is now managed without symptoms. Quality of life restored to pre-diagnosis level.", "date": "2025-12-23"},
+      {"user_id": "u086", "rating": 4, "comment": "Excellent longevity data from the manufacturer's registry studies. Evidence-based choice.", "date": "2026-01-06"},
+      {"user_id": "u087", "rating": 5, "comment": "My father plays golf again after implant. The rate response adapts perfectly to physical activity.", "date": "2026-01-13"},
+      {"user_id": "u088", "rating": 4, "comment": "Follow-up check visits are efficient — data downloads in seconds over Bluetooth.", "date": "2026-01-20"},
+      {"user_id": "u089", "rating": 2, "comment": "Price is very high. Similar efficacy devices available from competitors at lower cost.", "date": "2026-01-27"},
+      {"user_id": "u090", "rating": 5, "comment": "Sensing accuracy is exceptional. No over or under-sensing in 18 months of use.", "date": "2026-02-03"},
+      {"user_id": "u091", "rating": 4, "comment": "Post-operative recovery was smooth. Device checked out perfectly at 6-week follow-up.", "date": "2026-02-10"},
+      {"user_id": "u092", "rating": 5, "comment": "Surgeon's preferred device in our hospital. Implant success rate is 100 percent in our unit.", "date": "2026-02-17"},
+      {"user_id": "u093", "rating": 3, "comment": "The device is excellent but post-sale support from the distributor was poor.", "date": "2026-02-24"},
+      {"user_id": "u094", "rating": 5, "comment": "Changed from a competitor device. The difference in rate response quality is immediately noticeable.", "date": "2026-03-03"},
+      {"user_id": "u095", "rating": 4, "comment": "Full activity clearance given at 3 months. Returned to swimming and hiking.", "date": "2026-03-10"}
+    ],
+    "pm-001-m2": [
+      {"user_id": "u096", "rating": 4, "comment": "Single-chamber VVI is perfect for my permanent AF. Simpler and reliable.", "date": "2025-10-02"},
+      {"user_id": "u097", "rating": 4, "comment": "Compact size means the implant site is barely visible. Important at my age.", "date": "2025-10-09"},
+      {"user_id": "u098", "rating": 5, "comment": "8-year battery estimate based on pacing load in my case. Cardiologist is satisfied.", "date": "2025-10-16"},
+      {"user_id": "u099", "rating": 3, "comment": "Bluetooth diagnostics are convenient but the app is basic. Limited data visualization.", "date": "2025-10-23"},
+      {"user_id": "u100", "rating": 4, "comment": "Implant procedure was minimally invasive. Home within 24 hours post-op.", "date": "2025-10-30"},
+      {"user_id": "u101", "rating": 5, "comment": "Anti-interference shielding is excellent. I work in a factory with heavy machinery and have zero problems.", "date": "2025-11-06"},
+      {"user_id": "u102", "rating": 2, "comment": "The VVI mode is rigid. No rate response means heart rate does not increase with exercise.", "date": "2025-11-13"},
+      {"user_id": "u103", "rating": 4, "comment": "Price is more accessible than dual-chamber devices. Good option when budget is a constraint.", "date": "2025-11-20"},
+      {"user_id": "u104", "rating": 3, "comment": "Wish it had remote monitoring. Currently need to visit clinic every 6 months for interrogation.", "date": "2025-11-27"},
+      {"user_id": "u105", "rating": 5, "comment": "Implanted 4 years ago. Still on original battery. No complications whatsoever.", "date": "2025-12-04"},
+      {"user_id": "u106", "rating": 4, "comment": "Symptoms of slow heart rate gone completely since implant.", "date": "2025-12-11"},
+      {"user_id": "u107", "rating": 3, "comment": "No MRI conditional labelling. Required MRI for a knee injury and had to decline.", "date": "2025-12-18"},
+      {"user_id": "u108", "rating": 4, "comment": "Titanium casing feels robust. Cardiologist confirmed lead placement was straightforward.", "date": "2025-12-25"},
+      {"user_id": "u109", "rating": 2, "comment": "Pacemaker syndrome symptoms occurred occasionally due to VVI pacing and loss of AV synchrony.", "date": "2026-01-08"},
+      {"user_id": "u110", "rating": 5, "comment": "Good entry-level device for elderly patients who need basic ventricular pacing only.", "date": "2026-01-15"},
+      {"user_id": "u111", "rating": 4, "comment": "Follow-up schedule is standard and predictable. No surprises.", "date": "2026-01-22"},
+      {"user_id": "u112", "rating": 3, "comment": "Limited programmability compared to premium models. Fewer rate response options.", "date": "2026-01-29"},
+      {"user_id": "u113", "rating": 4, "comment": "Reliable for its intended purpose. Does exactly what it should without complications.", "date": "2026-02-05"},
+      {"user_id": "u114", "rating": 5, "comment": "Excellent choice for chronic AF with bradycardia. My cardiologist chose this specifically.", "date": "2026-02-12"},
+      {"user_id": "u115", "rating": 3, "comment": "No smartphone connectivity is a gap in today's connected healthcare landscape.", "date": "2026-02-19"}
+    ],
+    "pm-001-m3": [
+      {"user_id": "u116", "rating": 5, "comment": "No leads means no lead complications. After two lead failures with previous device, this is life-changing.", "date": "2025-09-20"},
+      {"user_id": "u117", "rating": 5, "comment": "CRT response was immediate. Ejection fraction improved from 25 to 42 percent in 6 months.", "date": "2025-09-27"},
+      {"user_id": "u118", "rating": 4, "comment": "AI adaptive algorithm learns your activity patterns. My settings have not needed adjustment in a year.", "date": "2025-10-04"},
+      {"user_id": "u119", "rating": 5, "comment": "The wireless monitoring sensor is seamless. Cardiologist reviews data without me attending clinic.", "date": "2025-10-11"},
+      {"user_id": "u120", "rating": 3, "comment": "Implant procedure is more complex than traditional devices. Longer procedure time and learning curve.", "date": "2025-10-18"},
+      {"user_id": "u121", "rating": 5, "comment": "Heart failure hospitalizations dropped to zero in the 18 months since implant.", "date": "2025-10-25"},
+      {"user_id": "u122", "rating": 4, "comment": "Price is very high but insurance covered it as medically necessary. Outcomes justify the cost.", "date": "2025-11-01"},
+      {"user_id": "u123", "rating": 5, "comment": "I returned to full-time work 8 weeks post-implant. Could not have done that with heart failure.", "date": "2025-11-08"},
+      {"user_id": "u124", "rating": 2, "comment": "Retrieval procedure was required due to pocket infection. Traumatic experience.", "date": "2025-11-15"},
+      {"user_id": "u125", "rating": 5, "comment": "The retrievable design gave me confidence knowing revision was possible if needed.", "date": "2025-11-22"},
+      {"user_id": "u126", "rating": 4, "comment": "6-minute walk test distance improved by 180 meters after 3 months of CRT.", "date": "2025-11-29"},
+      {"user_id": "u127", "rating": 5, "comment": "Breathlessness on mild exertion has resolved. Climbing stairs is no longer a challenge.", "date": "2025-12-06"},
+      {"user_id": "u128", "rating": 3, "comment": "Requires a highly experienced implanting centre. Not all hospitals can do this procedure.", "date": "2025-12-13"},
+      {"user_id": "u129", "rating": 5, "comment": "Best technological advancement in cardiac devices I have seen in 20 years of cardiology practice.", "date": "2025-12-20"},
+      {"user_id": "u130", "rating": 4, "comment": "The subcutaneous sensor transmits excellent data. My cardiologist gets weekly reports.", "date": "2025-12-27"},
+      {"user_id": "u131", "rating": 5, "comment": "Biventricular synchrony has been maintained perfectly. Echo confirmed resynchronization at 3 months.", "date": "2026-01-09"},
+      {"user_id": "u132", "rating": 3, "comment": "Limited centre availability means travel required for follow-up. Inconvenient for rural patients.", "date": "2026-01-16"},
+      {"user_id": "u133", "rating": 5, "comment": "Completely eliminated LBBB-related heart failure symptoms. Remarkable outcome.", "date": "2026-01-23"},
+      {"user_id": "u134", "rating": 4, "comment": "Cardiologist was impressed by the ease of deployment after initial learning curve.", "date": "2026-01-30"},
+      {"user_id": "u135", "rating": 5, "comment": "Game-changer for heart failure management. The leadless approach is the future.", "date": "2026-02-06"},
+      {"user_id": "u136", "rating": 4, "comment": "Weight gain due to fluid retention stopped within a month of CRT initiation.", "date": "2026-02-13"},
+      {"user_id": "u137", "rating": 2, "comment": "Cost is prohibitive for most patients without insurance coverage. Needs to be more accessible.", "date": "2026-02-20"},
+      {"user_id": "u138", "rating": 5, "comment": "Compared to conventional CRT-D, the outcome improvement rate is significantly higher.", "date": "2026-02-27"},
+      {"user_id": "u139", "rating": 4, "comment": "Follow-up data at 12 months showed sustained cardiac remodeling. Very positive result.", "date": "2026-03-06"},
+      {"user_id": "u140", "rating": 5, "comment": "My husband is gardening and playing with grandchildren again. We are incredibly grateful.", "date": "2026-03-13"}
+    ]
+  }
+}

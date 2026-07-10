@@ -26,6 +26,7 @@ export default function PrescriptionSidebar({ medicines, selectedIndex, onSelect
         {medicines.map((med, idx) => {
           const isSelected = idx === selectedIndex
           const isFailed   = !med.matched
+          const altCount   = med.recommendation?.recommended_alternatives?.length ?? 0
 
           return (
             <li
@@ -77,14 +78,30 @@ export default function PrescriptionSidebar({ medicines, selectedIndex, onSelect
                 )}
 
                 <span className="rx-sidebar__item-meta">
-                  {med.dosage && <span>{med.dosage}</span>}
+                  {med.dosage    && <span>{med.dosage}</span>}
                   {med.frequency && <span>{med.frequency}</span>}
                   {isFailed && <span className="rx-sidebar__item-fail-note">Not matched</span>}
                 </span>
+
+                {/* alternatives count chip — only when matched and alts exist */}
+                {!isFailed && altCount > 0 && (
+                  <span className="rx-sidebar__item-alts">
+                    <svg width="9" height="9" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                      <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" strokeWidth="1.4"
+                            strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    {altCount} alternative{altCount !== 1 ? 's' : ''}
+                  </span>
+                )}
               </span>
 
               {isSelected && (
-                <span className="rx-sidebar__item-arrow" aria-hidden="true">›</span>
+                <span className="rx-sidebar__item-arrow" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                    <path d="M4 2l4 4-4 4" stroke="currentColor" strokeWidth="1.8"
+                          strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </span>
               )}
             </li>
           )
